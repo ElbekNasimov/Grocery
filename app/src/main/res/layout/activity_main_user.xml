@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.MainUserActivity">
+
+    <RelativeLayout
+        android:id="@+id/toolbarRL"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:padding="10dp"
+        android:background="@drawable/shape_rect01" >
+        <TextView
+            android:id="@+id/nameTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="@string/app_name"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+        <ImageButton
+            android:id="@+id/logoutBtn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_logout_white"
+            android:layout_alignParentEnd="true"
+            android:background="@null"
+            android:contentDescription="@string/todo" />
+    </RelativeLayout>
+
+    <!--  Products  -->
+    <RelativeLayout
+        android:id="@+id/productsRL"
+        android:layout_below="@id/toolbarRL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        <!--        Search View-->
+        <EditText
+            android:id="@+id/searchET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_toStartOf="@id/filterPrBtn"
+            android:background="@drawable/shape_rect02"
+            android:drawableStart="@drawable/ic_search_gray"
+            android:drawablePadding="10dp"
+            android:hint="@string/search"
+            android:padding="10dp"
+            android:textSize="20sp" />
+        <!--    filter    -->
+        <ImageButton
+            android:id="@+id/filterPrBtn"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:src="@drawable/ic_dashboard_gray"
+            android:scaleType="fitXY"
+            android:background="@null" />
+
+        <!--    show filtered products title    -->
+        <TextView
+            android:id="@+id/filterPrTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/searchET"
+            android:text="@string/showing_all"
+            android:textColor="@color/black"
+            android:layout_marginStart="5dp"
+            android:layout_marginBottom="3dp" />
+        <!--    RecView show Products    -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/productRV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/filterPrTV"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/row_product_seller"/>
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>
