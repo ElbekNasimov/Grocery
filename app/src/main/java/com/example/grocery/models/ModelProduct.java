@@ -2,12 +2,14 @@ package com.example.grocery.models;
 
 public class ModelProduct {
     private String prID, prTitle, prDesc, prCat, prLoc, prQuan, prIcon, prQRCode, prBarCode,
+            qrCode, barCode,
             prPrice, prIsReserve, prDiscPrice, prDiscNote, prIsDisc, timestamp, uid;
 
     public ModelProduct() {
     }
 
     public ModelProduct(String prID, String prTitle, String prDesc, String prCat, String prLoc, String prQuan, String prIcon,
+                        String qrCode, String barCode,
                         String prQRCode, String prBarCode, String prPrice, String prIsReserve, String prDiscPrice,
                         String prDiscNote, String prIsDisc, String timestamp, String uid) {
         this.prID = prID;
@@ -26,6 +28,26 @@ public class ModelProduct {
         this.prIsDisc = prIsDisc;
         this.timestamp = timestamp;
         this.uid = uid;
+
+        this.barCode=barCode;
+        this.qrCode=qrCode;
+    }
+
+
+    public String getQrCode() {
+        return qrCode;
+    }
+
+    public void setQrCode(String qrCode) {
+        this.qrCode = qrCode;
+    }
+
+    public String getBarCode() {
+        return barCode;
+    }
+
+    public void setBarCode(String barCode) {
+        this.barCode = barCode;
     }
 
     public String getPrID() {

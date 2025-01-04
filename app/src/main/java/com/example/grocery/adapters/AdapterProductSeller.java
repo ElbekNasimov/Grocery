@@ -24,19 +24,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.grocery.FilterProduct;
 import com.example.grocery.R;
-import com.example.grocery.activities.MainAdminActivity;
 import com.example.grocery.crud.EditProductActivity;
 import com.example.grocery.models.ModelProduct;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -49,11 +44,13 @@ public class AdapterProductSeller extends RecyclerView.Adapter<AdapterProductSel
     private Context context;
     public ArrayList<ModelProduct> productList, filterList;
     private FilterProduct filter;
+    private double summa;
 
-    public AdapterProductSeller(Context context, ArrayList<ModelProduct> productList) {
+    public AdapterProductSeller(Context context, ArrayList<ModelProduct> productList, double sum) {
         this.context = context;
         this.productList = productList;
         this.filterList = productList;
+        this.summa = sum;
     }
 
     @Override
@@ -230,15 +227,12 @@ public class AdapterProductSeller extends RecyclerView.Adapter<AdapterProductSel
         bottomSheetDialog.show();
 
         // edit click
-        editBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bottomSheetDialog.dismiss();
-                // open edit pr activity
-                Intent intent = new Intent(context, EditProductActivity.class);
-                intent.putExtra("prId", id);
-                context.startActivity(intent);
-            }
+        editBtn.setOnClickListener(v -> {
+            bottomSheetDialog.dismiss();
+            // open edit pr activity
+            Intent intent = new Intent(context, EditProductActivity.class);
+            intent.putExtra("prId", id);
+            context.startActivity(intent);
         });
 
         // del click
@@ -262,51 +256,49 @@ public class AdapterProductSeller extends RecyclerView.Adapter<AdapterProductSel
                     }).show();
         });
 
-        isReserveChB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isReserve.equals("false")) {
-                    HashMap<String, Object> hashMap = new HashMap<>();
-                    hashMap.put("prIsReserve", "true");
-                    FirebaseAuth auth = FirebaseAuth.getInstance();
-                    DatabaseReference dataRef = FirebaseDatabase.getInstance().getReference("Users");
-                    dataRef.child(auth.getUid()).child("Products").child(id).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            Toast.makeText(context, "bron qilindi...", Toast.LENGTH_SHORT).show();
-                            isReserveChB.setChecked(true);
-                            bottomSheetDialog.dismiss();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(context, "failed", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
+        isReserveChB.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isReserve.equals("false")) {
+                HashMap<String, Object> hashMap = new HashMap<>();
+                hashMap.put("prIsReserve", "true");
+                FirebaseAuth auth = FirebaseAuth.getInstance();
+                DatabaseReference dataRef = FirebaseDatabase.getInstance().getReference("Users");
+                dataRef.child(auth.getUid()).child("Products").child(id).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Toast.makeText(context, "bron qilindi...", Toast.LENGTH_SHORT).show();
+                        isReserveChB.setChecked(true);
 
-
-                if (isReserve.equals("true")) {
-                    HashMap<String, Object> hashMap = new HashMap<>();
-                    hashMap.put("prIsReserve", "false");
-                    FirebaseAuth auth = FirebaseAuth.getInstance();
-                    DatabaseReference dataRef = FirebaseDatabase.getInstance().getReference("Users");
-                    dataRef.child(auth.getUid()).child("Products").child(id).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            Toast.makeText(context, "bron bekor bo'ldi...", Toast.LENGTH_SHORT).show();
-                            isReserveChB.setChecked(false);
-                            bottomSheetDialog.dismiss();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(context, "failed", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-
+                        bottomSheetDialog.dismiss();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(context, "failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
+
+
+            if (isReserve.equals("true")) {
+                HashMap<String, Object> hashMap = new HashMap<>();
+                hashMap.put("prIsReserve", "false");
+                FirebaseAuth auth = FirebaseAuth.getInstance();
+                DatabaseReference dataRef = FirebaseDatabase.getInstance().getReference("Users");
+                dataRef.child(auth.getUid()).child("Products").child(id).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Toast.makeText(context, "bron bekor bo'ldi...", Toast.LENGTH_SHORT).show();
+                        isReserveChB.setChecked(false);
+                        bottomSheetDialog.dismiss();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(context, "failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
         });
 
         // back click

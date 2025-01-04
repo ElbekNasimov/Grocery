@@ -1,20 +1,16 @@
 package com.example.grocery.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Patterns;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.grocery.R;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class ForgotPassActivity extends AppCompatActivity {
@@ -33,19 +29,9 @@ public class ForgotPassActivity extends AppCompatActivity {
 
         init();
 
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        backBtn.setOnClickListener(v -> onBackPressed());
 
-        recoverBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                recoverPass();
-            }
-        });
+        recoverBtn.setOnClickListener(v -> recoverPass());
     }
 
     private String email;
@@ -57,20 +43,14 @@ public class ForgotPassActivity extends AppCompatActivity {
         progressDialog.setMessage("sending for reset password");
         progressDialog.show();
 
-        auth.sendPasswordResetEmail(email).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                // instruction sent
-                progressDialog.dismiss();
-                Toast.makeText(ForgotPassActivity.this, "Reset email sent. Check email inbox", Toast.LENGTH_SHORT).show();
-                
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                progressDialog.dismiss();
-                Toast.makeText(ForgotPassActivity.this, "Password reset: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+        auth.sendPasswordResetEmail(email).addOnSuccessListener(unused -> {
+            // instruction sent
+            progressDialog.dismiss();
+            Toast.makeText(ForgotPassActivity.this, "Reset email sent. Check email inbox", Toast.LENGTH_SHORT).show();
+
+        }).addOnFailureListener(e -> {
+            progressDialog.dismiss();
+            Toast.makeText(ForgotPassActivity.this, "Password reset: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
 

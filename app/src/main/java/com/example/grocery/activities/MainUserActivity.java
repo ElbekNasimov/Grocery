@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -22,8 +24,10 @@ import com.example.grocery.adapters.AdapterProductUser;
 import com.example.grocery.models.ModelProduct;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,9 +39,12 @@ import java.util.HashMap;
 
 public class MainUserActivity extends AppCompatActivity {
 
+
+
     private TextView nameTV, filterPrTV;
     private EditText searchET;
     private ImageButton logoutBtn, filterPrBtn;
+
     private RecyclerView productRV;
     private ProgressDialog progressDialog;
     private ArrayList<ModelProduct> productList;
@@ -55,11 +62,13 @@ public class MainUserActivity extends AppCompatActivity {
 
         loadAllProducts();
 
+
 //        logoutBtn.setVisibility(View.GONE);
 
         logoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(MainUserActivity.this, "clicked", Toast.LENGTH_SHORT).show();
                 makeMeOffline();
             }
         });
@@ -68,7 +77,6 @@ public class MainUserActivity extends AppCompatActivity {
         searchET.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
@@ -82,7 +90,6 @@ public class MainUserActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-
             }
         });
 
@@ -108,19 +115,8 @@ public class MainUserActivity extends AppCompatActivity {
         // after logging out, make user offline
         progressDialog.setMessage("Logging Out User...");
 
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("online", "false");
-
-        // update value to db
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
-        reference.child(auth.getUid()).updateChildren(hashMap).addOnSuccessListener(unused -> {
-            // update successfully
-            auth.signOut();
-            checkUser();
-        }).addOnFailureListener(e -> {
-            progressDialog.dismiss();
-            Toast.makeText(MainUserActivity.this, "makeMeOnline: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        });
+        auth.signOut();
+        checkUser();
     }
 
     private void checkUser() {
@@ -128,8 +124,6 @@ public class MainUserActivity extends AppCompatActivity {
         if (user==null){
             startActivity(new Intent(MainUserActivity.this, LoginActivity.class));
             finish();
-        } else {
-            loadMyInfo();
         }
     }
 
@@ -200,7 +194,6 @@ public class MainUserActivity extends AppCompatActivity {
                             nameTV.setText(username + "(" + accountType + ")");
                         }
                     }
-
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
 //                        Toast.makeText(MainUserActivity.this, "loadMyInfo: " + error.toString(), Toast.LENGTH_SHORT).show();

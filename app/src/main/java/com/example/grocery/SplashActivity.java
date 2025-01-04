@@ -8,11 +8,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.example.grocery.activities.LoginActivity;
 import com.example.grocery.activities.MainAdminActivity;
 import com.example.grocery.activities.MainUserActivity;
+import com.example.grocery.crud.EditProductActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -56,19 +56,26 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void checkUserType() {
+
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+
         ref.orderByChild("uid").equalTo(auth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds: snapshot.getChildren()){
                     String accountType = ""+ds.child("accountType").getValue();
-
                     if (accountType.equals("Seller")){
                         // user is seller
-                        startActivity(new Intent(SplashActivity.this, MainAdminActivity.class));
+//                        startActivity(new Intent(SplashActivity.this, MainAdminActivity.class));
+                        Intent intent = new Intent(SplashActivity.this, MainAdminActivity.class);
+//                        intent.putExtra("checked", "true");
+                        startActivity(intent);
+//                        Intent intent = new Intent(context, EditProductActivity.class);
+//                        intent.putExtra("prId", id);
+//                        context.startActivity(intent);
                         finish();
                     } else {
-                        startActivity(new Intent(SplashActivity.this, MainUserActivity.class));
+//                        startActivity(new Intent(SplashActivity.this, MainUserActivity.class));
                         finish();
                     }
                 }

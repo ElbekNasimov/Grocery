@@ -99,12 +99,12 @@ public class EditProductActivity extends AppCompatActivity {
         });
 
         // pick product image
-        prodIconIV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showImagePickDialog();
-            }
-        });
+//        prodIconIV.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showImagePickDialog();
+//            }
+//        });
 
         // pick product category
         categoryET.setOnClickListener(new View.OnClickListener() {
@@ -290,12 +290,7 @@ public class EditProductActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(EditProductActivity.this);
             builder.setTitle("Result");
             builder.setMessage(result.getContents());
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            }).show();
+            builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss()).show();
         }
     });
     // pick location end //
@@ -363,21 +358,22 @@ public class EditProductActivity extends AppCompatActivity {
 
         if (image_uri == null) {
             // update without image
-
             // setup data in hashmap to update
+            String editTimestamps = "" + System.currentTimeMillis();
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put("prTitle", "" + title);
-            hashMap.put("prDesc", "" + desc);
+            if (!desc.isEmpty()) {
+                hashMap.put("prDesc", "" + desc);
+            }
             hashMap.put("prCat", "" + category);
             hashMap.put("prQuan", "" + quantity);
             hashMap.put("prLoc", "" + location);
             hashMap.put("prPrice", "" + price);
-            hashMap.put("barCode", "" + barcode);
-            hashMap.put("qrCode", "" + qrcode);
-            hashMap.put("prDiscPrice", "" + discPrice);
-            hashMap.put("prDiscNote", "" + discNote);
-            hashMap.put("prIsDisc", "" + isDisc);
-
+            if (isDisc) {
+                hashMap.put("prDiscPrice", "" + discPrice);
+                hashMap.put("prDiscNote", "" + discNote);
+                hashMap.put("prIsDisc", "" + isDisc);
+            }
             // update to db
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
             reference.child(auth.getUid()).child("Products").child(prID).updateChildren(hashMap)
@@ -411,6 +407,7 @@ public class EditProductActivity extends AppCompatActivity {
                     while (!uriTask.isSuccessful());
                     Uri downloadImageUri = uriTask.getResult();
                     if (uriTask.isSuccessful()) {
+                        String editTimestamps = "" + System.currentTimeMillis();
                         // setup data in hashmap to update
                         HashMap<String, Object> hashMap = new HashMap<>();
                         hashMap.put("prTitle", "" + title);
@@ -421,7 +418,7 @@ public class EditProductActivity extends AppCompatActivity {
                         hashMap.put("prLoc", "" + location);
                         hashMap.put("prPrice", "" + price);
                         hashMap.put("barCode", "" + barcode);
-                        hashMap.put("qrCode", "" + qrcode);
+                        hashMap.put("qrCode", "" + editTimestamps);
                         hashMap.put("prDiscPrice", "" + discPrice);
                         hashMap.put("prDiscNote", "" + discNote);
                         hashMap.put("prIsDisc", "" + isDisc);

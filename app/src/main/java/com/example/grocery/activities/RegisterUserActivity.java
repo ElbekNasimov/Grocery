@@ -226,18 +226,18 @@ public class RegisterUserActivity extends AppCompatActivity implements LocationL
             hashMap.put("username", ""+username);
             hashMap.put("email", ""+email);
             hashMap.put("password", ""+password);
-            hashMap.put("phone", ""+phoneNumber);
-            hashMap.put("country", ""+country);
-            hashMap.put("state", ""+state);
-            hashMap.put("city", ""+city);
-            hashMap.put("address", ""+address);
-            hashMap.put("longitude", ""+longitude);
-            hashMap.put("latitude", ""+latitude);
+//            hashMap.put("phone", ""+phoneNumber);
+//            hashMap.put("country", ""+country);
+//            hashMap.put("state", ""+state);
+//            hashMap.put("city", ""+city);
+//            hashMap.put("address", ""+address);
+//            hashMap.put("longitude", ""+longitude);
+//            hashMap.put("latitude", ""+latitude);
             hashMap.put("timestamp", ""+timestamp);
             hashMap.put("accountType", ""+"User");
-            hashMap.put("online", ""+"true");
-            hashMap.put("isActive", "" + "false");
-            hashMap.put("profileImg", "");
+//            hashMap.put("online", ""+"true");
+//            hashMap.put("isActive", "" + "false");
+//            hashMap.put("profileImg", "");
 
             // save to db
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");

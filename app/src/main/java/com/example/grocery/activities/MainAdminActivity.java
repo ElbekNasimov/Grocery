@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -48,14 +50,14 @@ public class MainAdminActivity extends AppCompatActivity {
     private ArrayList<ModelProduct> productList;
     private AdapterProductSeller adapterProductSeller;
 
+    private String checked;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_admin);
 
         init();
-
-        checkUser();
 
         loadAllProducts();
 
@@ -111,7 +113,10 @@ public class MainAdminActivity extends AppCompatActivity {
                 }
             }).show();
         });
-        logoutBtn.setOnClickListener(v -> makeMeOffline());
+        logoutBtn.setOnClickListener(v -> {
+            auth.signOut();
+            checkUser();
+        });
     }
 
     private void init(){
@@ -142,9 +147,11 @@ public class MainAdminActivity extends AppCompatActivity {
         FirebaseUser user = auth.getCurrentUser();
 
         if (user==null){
+            Toast.makeText(this, "user auth " + user, Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MainAdminActivity.this, LoginActivity.class));
             finish();
         } else {
+            Toast.makeText(this, "no user " + user, Toast.LENGTH_SHORT).show();
             loadMyInfo();
         }
     }
@@ -158,12 +165,17 @@ public class MainAdminActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 // before getting reset list
                 productList.clear();
+                double sum = 0;
                 for (DataSnapshot ds : snapshot.getChildren()) {
+                    String productCategory = "" + ds.child("prCat").getValue();
                     ModelProduct modelProduct = ds.getValue(ModelProduct.class);
                     productList.add(modelProduct);
+                    double price = Double.parseDouble("" + ds.child("prPrice").getValue());
+                    double quan = Double.parseDouble("" + ds.child("prQuan").getValue());
+                    sum += price * quan;
                 }
                 // setup adapter
-                adapterProductSeller = new AdapterProductSeller(MainAdminActivity.this, productList);
+                adapterProductSeller = new AdapterProductSeller(MainAdminActivity.this, productList, sum);
                 // set adapter
                 productRV.setAdapter(adapterProductSeller);
             }
@@ -172,7 +184,6 @@ public class MainAdminActivity extends AppCompatActivity {
             }
         });
     }
-
     private void loadFilteredProducts(String selected) {
         productList = new ArrayList<>();
         // get all products
@@ -192,7 +203,9 @@ public class MainAdminActivity extends AppCompatActivity {
                     }
                 }
                 // setup adapter
-                adapterProductSeller = new AdapterProductSeller(MainAdminActivity.this, productList);
+                // setup adapter
+                double sum = 0;
+                adapterProductSeller = new AdapterProductSeller(MainAdminActivity.this, productList, sum);
                 // set adapter
                 productRV.setAdapter(adapterProductSeller);
             }
@@ -201,38 +214,28 @@ public class MainAdminActivity extends AppCompatActivity {
             }
         });
     }
-
     private void loadMyInfo() {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
-        ref.orderByChild("uid").equalTo(auth.getUid())
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot ds : snapshot.getChildren()) {
-                            // get data from db
-                            String username = "" + ds.child("username").getValue();
-                            String accountType = "" + ds.child("accountType").getValue();
-                            String shopName = "" + ds.child("shopName").getValue();
-                            String email = "" + ds.child("email").getValue();
-                            String profileImg = "" + ds.child("profileImg").getValue();
-                            // set data to UI
-                            nameTV.setText(username + "(" + accountType + ")");
-                            shopNameTV.setText(shopName);
-                            emailTV.setText(email);
-                            try {
-                                Picasso.get().load(profileImg).placeholder(R.drawable.ic_store_gray).into(profCIV);
-                            } catch (Exception e){
-                                profCIV.setImageResource(R.drawable.ic_store_gray);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-//                        Toast.makeText(MainAdminActivity.this, "loadMyInfo: " + error.toString(), Toast.LENGTH_SHORT).show();
-
-                    }
-                });
+        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Users");
+        reference1.child(auth.getUid()).child("Products").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // before getting reset list
+                double sum = 0;
+                int count = 0;
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    double prPrice = Double.parseDouble("" + ds.child("prPrice").getValue());
+                    double prQuan = Double.parseDouble("" + ds.child("prQuan").getValue());
+                    sum += prPrice * prQuan;
+                    count++;
+                }
+                // setup adapter
+                // setup adapter
+                shopNameTV.setText(Double.toString(sum) + "qator " + count);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
     }
 
     private void showProductsUI(){

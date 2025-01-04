@@ -87,13 +87,13 @@ public class AddProductActivity extends AppCompatActivity {
             }
         });
 
-        // pick product image
-        prodIconIV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showImagePickDialog();
-            }
-        });
+//         pick product image
+//        prodIconIV.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showImagePickDialog();
+//            }
+//        });
 
         // pick product category
         categoryET.setOnClickListener(new View.OnClickListener() {
@@ -134,16 +134,13 @@ public class AddProductActivity extends AppCompatActivity {
             }
         });
 
-        addPrdBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /* Flow
-                1) input data;
-                2) validate data;
-                3) add data to db
-                 */
-                inputData();
-            }
+        addPrdBtn.setOnClickListener(v -> {
+            /* Flow
+            1) input data;
+            2) validate data;
+            3) add data to db
+             */
+            inputData();
         });
     }
 
@@ -265,9 +262,6 @@ public class AddProductActivity extends AppCompatActivity {
             Toast.makeText(this, "Miqdorini kiriting...", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (desc.isEmpty()){
-            desc="";
-        }
         if (price.isEmpty()){
             price="0";
         }
@@ -279,10 +273,6 @@ public class AddProductActivity extends AppCompatActivity {
                 Toast.makeText(this, "Chegirmani kiriting...", Toast.LENGTH_SHORT).show();
                 return;
             }
-        } else {
-            // product is with disc
-            discPrice = "0";
-            discNote = "";
         }
 
         // 3) product adding
@@ -299,94 +289,88 @@ public class AddProductActivity extends AppCompatActivity {
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put("prID", "" + timestamps);
             hashMap.put("prTitle", "" + title);
-            hashMap.put("prDesc", "" + desc);
+//            if (!desc.isEmpty()) {
+                hashMap.put("prDesc", "" + desc);
+//            }
             hashMap.put("prCat", "" + category);
             hashMap.put("prLoc", "" + location);
             hashMap.put("prQuan", "" + quantity);
-            hashMap.put("prIcon", "");                                  // no image, set empty
+            hashMap.put("prIcon", "");                              // no image, set empty
             hashMap.put("qrCode", "");                                  // qrCode
             hashMap.put("barCode", barCode);                                  // barCode
             hashMap.put("prPrice", "" + price);
             hashMap.put("prIsReserve", "" + isReserve);
-            hashMap.put("prDiscPrice", "" + discPrice);
-            hashMap.put("prDiscNote", "" + discNote);
-            hashMap.put("prIsDisc", "" + isDisc);
+//            if (isDisc) {
+                hashMap.put("prDiscPrice", "" + discPrice);
+                hashMap.put("prDiscNote", "" + discNote);
+                hashMap.put("prIsDisc", "" + isDisc);
+//            }
             hashMap.put("timestamp", "" + timestamps);
             hashMap.put("uid", "" + auth.getUid());
 
             // add to db
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
-            reference.child(auth.getUid()).child("Products").child(timestamps).setValue(hashMap)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            progressDialog.dismiss();
-                            Toast.makeText(AddProductActivity.this, "Qo'shildi", Toast.LENGTH_SHORT).show();
-                            clearData();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            Toast.makeText(AddProductActivity.this, "add pr: " + e.toString(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        } else {
-            // upload with image
-            // upload image to storage
 
+//            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Products");
+//            reference.child(title).setValue(hashMap).addOnSuccessListener(unused -> {
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
+            reference.child("8hmukKJ8PgaUhzOYusjWQYYvqkp1").child("Products").child(timestamps).
+                    setValue(hashMap).addOnSuccessListener(unused -> {
+                progressDialog.dismiss();
+                Toast.makeText(AddProductActivity.this, "Qo'shildi", Toast.LENGTH_SHORT).show();
+                clearData();
+            }).addOnFailureListener(e -> {
+                progressDialog.dismiss();
+                Toast.makeText(AddProductActivity.this, "add pr error: " + e.toString(), Toast.LENGTH_SHORT).show();
+            });
+        } else {
             // name and path of image to be uploaded
             String filePathAndName = "product_images/" + "" + timestamps;
 
-
             StorageReference storageReference = FirebaseStorage.getInstance().getReference(filePathAndName);
-            storageReference.putFile(image_uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    // image uploaded
-                    // get uri of uploaded image
-                    Task<Uri> task = taskSnapshot.getStorage().getDownloadUrl();
-                    while (!task.isSuccessful());
-                    Uri downloadImageUri = task.getResult();
+            storageReference.putFile(image_uri).addOnSuccessListener(taskSnapshot -> {
+                // image uploaded
+                // get uri of uploaded image
+                Task<Uri> task = taskSnapshot.getStorage().getDownloadUrl();
+                while (!task.isSuccessful());
+                Uri downloadImageUri = task.getResult();
 
-                    if (task.isSuccessful()){
-                        // uri of image received, uploaded to db
-                        HashMap<String, Object> hashMap = new HashMap<>();
-                        hashMap.put("prID", "" + timestamps);
-                        hashMap.put("prTitle", "" + title);
-                        hashMap.put("prDesc", "" + desc);
-                        hashMap.put("prCat", "" + category);
-                        hashMap.put("prLoc", "" + location);
-                        hashMap.put("prQuan", "" + quantity);
-                        hashMap.put("prIcon", "" + downloadImageUri);
-                        hashMap.put("qrCode", "");                                  // qrCode
-                        hashMap.put("barCode", barCode);                                 // barCode
-                        hashMap.put("prPrice", "" + price);
-                        hashMap.put("prIsReserve", "" + isReserve);                             // doing reserve (bron)
-                        hashMap.put("prDiscPrice", "" + discPrice);
-                        hashMap.put("prDiscNote", "" + discNote);
-                        hashMap.put("prIsDisc", "" + isDisc);
-                        hashMap.put("timestamp", "" + timestamps);
-                        hashMap.put("uid", "" + auth.getUid());
-                        // add to db
-                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
-                        reference.child(auth.getUid()).child("Products").child(timestamps).setValue(hashMap)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void unused) {
-                                        progressDialog.dismiss();
-                                        Toast.makeText(AddProductActivity.this, "Qo'shildi", Toast.LENGTH_SHORT).show();
-                                        clearData();
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        progressDialog.dismiss();
-                                        Toast.makeText(AddProductActivity.this, "add pr: " + e.toString(), Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                    } else {
-                    }
+                if (task.isSuccessful()){
+                    // uri of image received, uploaded to db
+                    HashMap<String, Object> hashMap = new HashMap<>();
+                    hashMap.put("prID", "" + timestamps);
+                    hashMap.put("prTitle", "" + title);
+                    hashMap.put("prDesc", "" + desc);
+                    hashMap.put("prCat", "" + category);
+                    hashMap.put("prLoc", "" + location);
+                    hashMap.put("prQuan", "" + quantity);
+                    hashMap.put("prIcon", "" + downloadImageUri);
+                    hashMap.put("qrCode", "");                                  // qrCode
+                    hashMap.put("barCode", barCode);                                 // barCode
+                    hashMap.put("prPrice", "" + price);
+                    hashMap.put("prIsReserve", "" + isReserve);                             // doing reserve (bron)
+                    hashMap.put("prDiscPrice", "" + discPrice);
+                    hashMap.put("prDiscNote", "" + discNote);
+                    hashMap.put("prIsDisc", "" + isDisc);
+                    hashMap.put("timestamp", "" + timestamps);
+                    hashMap.put("uid", "" + auth.getUid());
+                    // add to db
+                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
+                    reference.child(auth.getUid()).child("Products").child(timestamps).setValue(hashMap)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(AddProductActivity.this, "Qo'shildi", Toast.LENGTH_SHORT).show();
+                                    clearData();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(AddProductActivity.this, "add pr: " + e.toString(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                } else {
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -420,7 +404,7 @@ public class AddProductActivity extends AppCompatActivity {
                     // camera clicked
                     if (checkCameraPermission()){
                         // camera permission allowed
-                        pickFromCamera();
+//                        pickFromCamera();
                     } else {
                         // not allowed, request
                         requestCameraPermission();
@@ -446,20 +430,20 @@ public class AddProductActivity extends AppCompatActivity {
         startActivityForResult(intent, IMAGE_PICK_GALLERY_CODE);
     }
 
-    private void pickFromCamera(){
-
-        // using media store to pick high/original quality image
-
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(MediaStore.Images.Media.TITLE, "Temp_Image_Title");
-        contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Temp_Image_Description");
-
-        image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
-        startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
-    }
+//    private void pickFromCamera(){
+//
+//        // using media store to pick high/original quality image
+//
+//        ContentValues contentValues = new ContentValues();
+//        contentValues.put(MediaStore.Images.Media.TITLE, "Temp_Image_Title");
+//        contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Temp_Image_Description");
+//
+//        image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+//
+//        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        intent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
+//        startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
+//    }
 
     private boolean checkStoragePermission(){
         boolean result = ContextCompat.checkSelfPermission(this,
@@ -493,7 +477,7 @@ public class AddProductActivity extends AppCompatActivity {
                     boolean storageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
                     if (cameraAccepted && storageAccepted) {
                         // location allowed
-                        pickFromCamera();
+//                        pickFromCamera();
                     } else {
                         // location denied
                         Toast.makeText(this, "Camera permissions are needed...", Toast.LENGTH_SHORT).show();

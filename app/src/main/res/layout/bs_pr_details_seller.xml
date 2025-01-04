@@ -38,7 +38,7 @@
             android:layout_toStartOf="@id/delBtn"/>
         
         <TextView
-            android:id="@id/nameTV"
+            android:id="@+id/nameTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -111,21 +111,79 @@
             android:text="@string/quantity"
             android:textColor="@color/black"
             android:textSize="18sp" />
-        <TextView
-            android:id="@+id/addedAtTV"
-            android:layout_width="wrap_content"
+
+        <RelativeLayout
+            android:id="@+id/timesRV"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="@string/_00_00_00"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
-        <CheckBox
-            android:id="@+id/isReserveChB"
-            android:layout_width="wrap_content"
+            android:layout_marginTop="5dp" >
+            <TextView
+                android:id="@+id/gap1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="20dp"
+                android:text="@string/addedAt"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+            <TextView
+                android:id="@+id/addedAtTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/_00_00_00"
+                android:textColor="@color/black"
+                android:layout_toEndOf="@id/gap1"
+                android:textSize="18sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/timeRV"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:text="@string/reserve" />
+            android:layout_marginTop="5dp" >
+            <TextView
+                android:id="@+id/gap2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="20dp"
+                android:text="@string/editAtTV"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+            <TextView
+                android:id="@+id/editAtTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/_00_00_00"
+                android:textColor="@color/black"
+                android:layout_toEndOf="@id/gap2"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" >
+            <CheckBox
+                android:id="@+id/isReserveChB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:text="@string/reserve" />
+
+            <CheckBox
+                android:id="@+id/isCheckChB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:layout_toEndOf="@id/isReserveChB"
+                android:text="@string/checkChB" />
+        </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"

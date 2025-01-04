@@ -54,7 +54,8 @@ public class RegisterAdminActivity extends AppCompatActivity implements Location
 
     private ImageButton backBtn, gpsBtn;
     private CircularImageView profileCIV;
-    private EditText usernameET, shopNameET, emailET, passET, confPassET, phoneET, deliveryET, countryET, stateET, cityET, addressET;
+    private EditText usernameET, shopNameET, emailET, passET, confPassET, phoneET, deliveryET,
+            countryET, stateET, cityET, addressET;
     private Button regAdminBtn;
 
     // permission constants
@@ -98,27 +99,27 @@ public class RegisterAdminActivity extends AppCompatActivity implements Location
             }
         });
 
-        gpsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // detect current location
-                if (checkLocationPermission()){
-                    // already allowed
-                    detectLocation();
-                } else {
-                    // not allowed, request
-                    requestLocationPermissions();
-                }
-            }
-        });
+//        gpsBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // detect current location
+//                if (checkLocationPermission()){
+//                    // already allowed
+////                    detectLocation();
+//                } else {
+//                    // not allowed, request
+//                    requestLocationPermissions();
+//                }
+//            }
+//        });
 
-        profileCIV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // pick image
-//                showImagePickDialog();
-            }
-        });
+//        profileCIV.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // pick image
+////                showImagePickDialog();
+//            }
+//        });
 
         regAdminBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -181,14 +182,14 @@ public class RegisterAdminActivity extends AppCompatActivity implements Location
             Toast.makeText(this, "Enter Shop Name...", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (TextUtils.isEmpty(phoneNumber)){
-            Toast.makeText(this, "Enter Phone Number...", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (TextUtils.isEmpty(deliveryFee)){
-            Toast.makeText(this, "Enter Delivery Fee...", Toast.LENGTH_SHORT).show();
-            return;
-        }
+//        if (TextUtils.isEmpty(phoneNumber)){
+//            Toast.makeText(this, "Enter Phone Number...", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//        if (TextUtils.isEmpty(deliveryFee)){
+//            Toast.makeText(this, "Enter Delivery Fee...", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
 //        if (latitude == 0.0 || longitude == 0.0){
 //            Toast.makeText(this, "Click GPS Button...", Toast.LENGTH_SHORT).show();
 //            return;
@@ -240,20 +241,20 @@ public class RegisterAdminActivity extends AppCompatActivity implements Location
             hashMap.put("username", ""+username);
             hashMap.put("email", ""+email);
             hashMap.put("password", ""+password);
-            hashMap.put("shopName", ""+shopName);
-            hashMap.put("phone", ""+phoneNumber);
-            hashMap.put("delivery", ""+deliveryFee);
-            hashMap.put("country", ""+country);
-            hashMap.put("state", ""+state);
-            hashMap.put("city", ""+city);
-            hashMap.put("address", ""+address);
-            hashMap.put("longitude", ""+longitude);
-            hashMap.put("latitude", ""+latitude);
+//            hashMap.put("shopName", ""+shopName);
+//            hashMap.put("phone", ""+phoneNumber);
+//            hashMap.put("delivery", ""+deliveryFee);
+//            hashMap.put("country", ""+country);
+//            hashMap.put("state", ""+state);
+//            hashMap.put("city", ""+city);
+//            hashMap.put("address", ""+address);
+//            hashMap.put("longitude", ""+longitude);
+//            hashMap.put("latitude", ""+latitude);
             hashMap.put("timestamp", ""+timestamp);
             hashMap.put("accountType", ""+"Seller");
-            hashMap.put("online", ""+"true");
-            hashMap.put("shopOpen", ""+"true");
-            hashMap.put("profileImg", "");
+//            hashMap.put("online", ""+"true");
+//            hashMap.put("shopOpen", ""+"true");
+//            hashMap.put("profileImg", "");
 
             // save to db
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
@@ -326,13 +327,7 @@ public class RegisterAdminActivity extends AppCompatActivity implements Location
                                         "user saving with profImg: " + e.toString(), Toast.LENGTH_SHORT).show();
                             }
                         });
-
-
                     }
-
-
-
-
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -341,7 +336,6 @@ public class RegisterAdminActivity extends AppCompatActivity implements Location
                             "upload profile: " + e.toString(), Toast.LENGTH_SHORT).show();
                 }
             });
-
         }
     }
 
@@ -365,7 +359,7 @@ public class RegisterAdminActivity extends AppCompatActivity implements Location
                     boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                     if (locationAccepted) {
                         // location allowed
-                        detectLocation();
+//                        detectLocation();
                     } else {
                         // location denied
                         Toast.makeText(this, "Location permission is needed...", Toast.LENGTH_SHORT).show();
@@ -401,16 +395,15 @@ public class RegisterAdminActivity extends AppCompatActivity implements Location
             }
             break;
         }
-
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     // detect location
-    private void detectLocation() {
-        Toast.makeText(this, "Please wait...", Toast.LENGTH_LONG).show();
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-    }
+//    private void detectLocation() {
+//        Toast.makeText(this, "Please wait...", Toast.LENGTH_LONG).show();
+//        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+//    }
 
     // Override methods for implements
     @Override
@@ -418,7 +411,6 @@ public class RegisterAdminActivity extends AppCompatActivity implements Location
         // location detected
         latitude = location.getLatitude();
         longitude = location.getLongitude();
-
         findAddress();
     }
 
@@ -429,7 +421,6 @@ public class RegisterAdminActivity extends AppCompatActivity implements Location
         geocoder = new Geocoder(this, Locale.getDefault());
         try {
             addresses = geocoder.getFromLocation(latitude, longitude, 1);
-
             String address = addresses.get(0).getAddressLine(0); // complete address
             String city = addresses.get(0).getLocality();
             String state = addresses.get(0).getAdminArea();
